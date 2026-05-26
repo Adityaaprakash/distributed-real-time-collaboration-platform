@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/collabdb
+    username: collab
+    password: collab123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+jwt:
+  secret: 4b2c1598f82a932c0c7a840eab7110e53a253086eb0c2a2651475b945f3c959828d11d1efcd16bb6e42b8eec1ea2b6e12e756184852c03c5d6e24b7a1d1e4c9f
+  expiration: 900000
+  refresh-expiration: 604800000

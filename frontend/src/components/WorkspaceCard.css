@@ -1,0 +1,57 @@
+.workspace-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.workspace-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(187, 134, 252, 0.2);
+  border-color: rgba(187, 134, 252, 0.5);
+}
+
+.workspace-card-title {
+  margin: 0 0 10px 0;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.workspace-card-desc {
+  color: #aaa;
+  font-size: 0.95rem;
+  margin: 0 0 20px 0;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.workspace-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #888;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 15px;
+}
+
+.owner {
+  font-weight: 500;
+  color: #bb86fc;
+}
+
+.members {
+  background: rgba(187, 134, 252, 0.1);
+  padding: 4px 8px;
+  border-radius: 12px;
+  color: #bb86fc;
+}

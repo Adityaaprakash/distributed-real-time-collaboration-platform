@@ -1,0 +1,102 @@
+.dashboard-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+  color: #f0f0f0;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  background: linear-gradient(90deg, #bb86fc, #3700b3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 1.1rem;
+}
+
+.btn-logout {
+  padding: 8px 16px;
+  background: rgba(220, 53, 69, 0.1);
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.btn-logout:hover {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+.workspaces-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #6200ea 0%, #3700b3 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(98, 0, 234, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(98, 0, 234, 0.4);
+}
+
+.workspaces-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  color: #aaa;
+  font-size: 1.2rem;
+}
+
+.error-message {
+  padding: 15px;
+  background: rgba(220, 53, 69, 0.1);
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+body {
+  background-color: #121212;
+  color: #fff;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}

@@ -1,0 +1,79 @@
+.member-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.member-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 15px 20px;
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+
+.member-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.member-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.member-name {
+  font-weight: 600;
+  color: #fff;
+}
+
+.member-email {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.role-badge {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-gold {
+  background: rgba(255, 215, 0, 0.15);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.badge-blue {
+  background: rgba(0, 191, 255, 0.15);
+  color: #00bfff;
+  border: 1px solid rgba(0, 191, 255, 0.3);
+}
+
+.badge-gray {
+  background: rgba(169, 169, 169, 0.15);
+  color: #a9a9a9;
+  border: 1px solid rgba(169, 169, 169, 0.3);
+}
+
+.btn-remove {
+  background: transparent;
+  color: #ff4757;
+  border: 1px solid #ff4757;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+}
+
+.btn-remove:hover {
+  background: #ff4757;
+  color: white;
+}
