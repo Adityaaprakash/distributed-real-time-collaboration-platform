@@ -5,6 +5,8 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import WorkspaceCreate from './pages/WorkspaceCreate';
 import WorkspaceDetails from './pages/WorkspaceDetails';
+import DocumentCreatePage from './pages/DocumentCreatePage';
+import DocumentEditorPage from './pages/DocumentEditorPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
@@ -24,6 +26,14 @@ function App() {
         <Route 
           path="/workspaces/:id" 
           element={<ProtectedRoute><WorkspaceDetails /></ProtectedRoute>} 
+        />
+        <Route 
+          path="/workspaces/:id/documents/new" 
+          element={<ProtectedRoute><DocumentCreatePage /></ProtectedRoute>} 
+        />
+        <Route 
+          path="/workspaces/:id/documents/:documentId" 
+          element={<ProtectedRoute><DocumentEditorPage /></ProtectedRoute>} 
         />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

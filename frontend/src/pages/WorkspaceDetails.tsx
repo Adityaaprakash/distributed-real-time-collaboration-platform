@@ -3,6 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { workspaceService, WorkspaceResponse, WorkspaceMemberResponse } from '../services/workspaceService';
 import { getMe } from '../services/auth';
 import MemberList from '../components/MemberList';
+import DocumentCard from '../components/DocumentCard';
+import documentService from '../services/documentService';
+import { DocumentResponse } from '../types/document';
 import './WorkspaceDetails.css';
 
 const WorkspaceDetails = () => {
@@ -13,6 +16,7 @@ const WorkspaceDetails = () => {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [documents, setDocuments] = useState<DocumentResponse[]>([]);
   
   // Invite form state
   const [inviteEmail, setInviteEmail] = useState('');
@@ -22,14 +26,16 @@ const WorkspaceDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [meData, wsData, membersData] = await Promise.all([
+        const [meData, wsData, membersData, docsData] = await Promise.all([
           getMe(),
           workspaceService.getWorkspace(id!),
-          workspaceService.getMembers(id!)
+          workspaceService.getMembers(id!),
+          documentService.getWorkspaceDocuments(id!)
         ]);
         setCurrentUser(meData);
         setWorkspace(wsData);
         setMembers(membersData);
+        setDocuments(docsData);
       } catch (err: any) {
         setError(err.response?.data?.message || 'Failed to load workspace data.');
       } finally {
@@ -101,6 +107,26 @@ const WorkspaceDetails = () => {
           canRemove={isAdminOrOwner} 
           onRemove={handleRemoveMember} 
         />
+      </div>
+
+      <div className="documents-section" style={{ marginTop: '40px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>Documents</h3>
+          <button className="btn-primary" onClick={() => navigate(`/workspaces/${id}/documents/new`)}>
+            New Document
+          </button>
+        </div>
+        <div className="documents-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
+          {documents.map(doc => (
+            <DocumentCard 
+              key={doc.id} 
+              document={doc} 
+              canDelete={isAdminOrOwner || doc.createdByEmail === currentUser?.email}
+              onDelete={(docId) => setDocuments(documents.filter(d => d.id !== docId))}
+            />
+          ))}
+          {documents.length === 0 && <p>No documents found.</p>}
+        </div>
       </div>
 
       {isAdminOrOwner && (
