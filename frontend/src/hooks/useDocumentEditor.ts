@@ -2,13 +2,22 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { DocumentResponse } from '../types/document';
 import documentService from '../services/documentService';
 
-export function useDocumentEditor(workspaceId: string, documentId: string | null) {
+import { DocumentEditBroadcast } from '../types/collaboration';
+
+export function useDocumentEditor(
+  workspaceId: string, 
+  documentId: string | null,
+  sendEditViaWS: ((content: string, title: string) => void) | null = null
+) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [document, setDocument] = useState<DocumentResponse | null>(null);
   const [isDirty, setIsDirty] = useState(false);
   const isFirstLoad = useRef(true);
+  
+  const isUserTyping = useRef(false);
+  const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (documentId) {
@@ -26,14 +35,37 @@ export function useDocumentEditor(workspaceId: string, documentId: string | null
     }
   }, [workspaceId, documentId]);
 
+  const setTyping = useCallback(() => {
+    isUserTyping.current = true;
+    if (typingTimeout.current) clearTimeout(typingTimeout.current);
+    typingTimeout.current = setTimeout(() => {
+      isUserTyping.current = false;
+    }, 1000);
+  }, []);
+
   const handleTitleChange = useCallback((value: string) => {
     setTitle(value);
     setIsDirty(true);
-  }, []);
+    setTyping();
+    if (sendEditViaWS) {
+      sendEditViaWS(content, value);
+    }
+  }, [content, sendEditViaWS, setTyping]);
 
   const handleContentChange = useCallback((value: string) => {
     setContent(value);
     setIsDirty(true);
+    setTyping();
+    if (sendEditViaWS) {
+      sendEditViaWS(value, title);
+    }
+  }, [title, sendEditViaWS, setTyping]);
+
+  const applyRemoteEdit = useCallback((broadcast: DocumentEditBroadcast) => {
+    if (isUserTyping.current) return;
+    setTitle(broadcast.title);
+    setContent(broadcast.content);
+    setDocument(prev => prev ? { ...prev, version: broadcast.version } : null);
   }, []);
 
   const save = useCallback(async () => {
@@ -66,5 +98,5 @@ export function useDocumentEditor(workspaceId: string, documentId: string | null
     return () => clearTimeout(timer);
   }, [title, content, isDirty, save]);
 
-  return { title, content, saveStatus, isDirty, document, handleTitleChange, handleContentChange, save };
+  return { title, content, saveStatus, isDirty, document, handleTitleChange, handleContentChange, save, applyRemoteEdit };
 }

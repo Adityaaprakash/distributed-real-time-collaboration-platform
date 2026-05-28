@@ -162,7 +162,7 @@ public class DocumentService {
         return mapToDocumentResponse(document, true);
     }
 
-    private void saveVersionSnapshot(Document document) {
+    void saveVersionSnapshot(Document document) {
         DocumentVersion version = DocumentVersion.builder()
                 .document(document)
                 .title(document.getTitle())
