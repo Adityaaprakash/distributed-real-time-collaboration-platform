@@ -7,6 +7,8 @@ import DocumentCard from '../components/DocumentCard';
 import documentService from '../services/documentService';
 import { DocumentResponse } from '../types/document';
 import './WorkspaceDetails.css';
+import { useWorkspaceChat } from '../hooks/useWorkspaceChat';
+import { WorkspaceChatPanel } from '../components/WorkspaceChatPanel';
 
 const WorkspaceDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +24,11 @@ const WorkspaceDetails = () => {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('MEMBER');
   const [inviteError, setInviteError] = useState<string | null>(null);
+
+  const [activeTab, setActiveTab] = useState<'documents' | 'members' | 'chat'>('documents');
+
+  const { messages, sendMessage, isConnected, isLoadingHistory } = useWorkspaceChat(id, currentUser?.email);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,55 +107,76 @@ const WorkspaceDetails = () => {
         <span>Members: {workspace.memberCount}</span>
       </div>
 
-      <div className="members-section">
-        <h3>Members</h3>
-        <MemberList 
-          members={members} 
-          canRemove={isAdminOrOwner} 
-          onRemove={handleRemoveMember} 
-        />
+      <div className="tabs">
+        <button className={`tab ${activeTab === 'documents' ? 'active' : ''}`} onClick={() => setActiveTab('documents')}>Documents</button>
+        <button className={`tab ${activeTab === 'members' ? 'active' : ''}`} onClick={() => setActiveTab('members')}>Members</button>
+        <button className={`tab ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => setActiveTab('chat')}>Chat</button>
       </div>
 
-      <div className="documents-section" style={{ marginTop: '40px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3>Documents</h3>
-          <button className="btn-primary" onClick={() => navigate(`/workspaces/${id}/documents/new`)}>
-            New Document
-          </button>
-        </div>
-        <div className="documents-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
-          {documents.map(doc => (
-            <DocumentCard 
-              key={doc.id} 
-              document={doc} 
-              canDelete={isAdminOrOwner || doc.createdByEmail === currentUser?.email}
-              onDelete={(docId) => setDocuments(documents.filter(d => d.id !== docId))}
+      <div className="tab-content" style={{ marginTop: '20px', height: '600px', display: 'flex', flexDirection: 'column' }}>
+        {activeTab === 'members' && (
+          <div className="members-section">
+            <h3>Members</h3>
+            <MemberList 
+              members={members} 
+              canRemove={isAdminOrOwner} 
+              onRemove={handleRemoveMember} 
             />
-          ))}
-          {documents.length === 0 && <p>No documents found.</p>}
-        </div>
-      </div>
+            {isAdminOrOwner && (
+              <div className="invite-section" style={{ marginTop: '20px' }}>
+                <h3>Invite Member</h3>
+                {inviteError && <div className="error-message inline">{inviteError}</div>}
+                <form onSubmit={handleInvite} className="invite-form">
+                  <input 
+                    type="email" 
+                    value={inviteEmail} 
+                    onChange={e => setInviteEmail(e.target.value)} 
+                    placeholder="User Email" 
+                    required 
+                  />
+                  <select value={inviteRole} onChange={e => setInviteRole(e.target.value)}>
+                    <option value="MEMBER">Member</option>
+                    <option value="ADMIN">Admin</option>
+                  </select>
+                  <button type="submit" className="btn-primary">Invite</button>
+                </form>
+              </div>
+            )}
+          </div>
+        )}
 
-      {isAdminOrOwner && (
-        <div className="invite-section">
-          <h3>Invite Member</h3>
-          {inviteError && <div className="error-message inline">{inviteError}</div>}
-          <form onSubmit={handleInvite} className="invite-form">
-            <input 
-              type="email" 
-              value={inviteEmail} 
-              onChange={e => setInviteEmail(e.target.value)} 
-              placeholder="User Email" 
-              required 
-            />
-            <select value={inviteRole} onChange={e => setInviteRole(e.target.value)}>
-              <option value="MEMBER">Member</option>
-              <option value="ADMIN">Admin</option>
-            </select>
-            <button type="submit" className="btn-primary">Invite</button>
-          </form>
-        </div>
-      )}
+        {activeTab === 'documents' && (
+          <div className="documents-section">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3>Documents</h3>
+              <button className="btn-primary" onClick={() => navigate(`/workspaces/${id}/documents/new`)}>
+                New Document
+              </button>
+            </div>
+            <div className="documents-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
+              {documents.map(doc => (
+                <DocumentCard 
+                  key={doc.id} 
+                  document={doc} 
+                  canDelete={isAdminOrOwner || doc.createdByEmail === currentUser?.email}
+                  onDelete={(docId) => setDocuments(documents.filter(d => d.id !== docId))}
+                />
+              ))}
+              {documents.length === 0 && <p>No documents found.</p>}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'chat' && (
+          <WorkspaceChatPanel 
+            messages={messages}
+            sendMessage={sendMessage}
+            isConnected={isConnected}
+            isLoadingHistory={isLoadingHistory}
+            currentUserEmail={currentUser?.email}
+          />
+        )}
+      </div>
       
       <button className="btn-secondary mt-20" onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
     </div>

@@ -108,3 +108,36 @@
   margin-bottom: 15px;
   padding: 10px 15px;
 }
+
+.tabs {
+  display: flex;
+  gap: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 20px;
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  color: #888;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  color: #ccc;
+}
+
+.tab.active {
+  color: #bb86fc;
+  border-bottom-color: #bb86fc;
+}
+
+.tab-content {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0 0 16px 16px;
+  padding: 20px;
+}
