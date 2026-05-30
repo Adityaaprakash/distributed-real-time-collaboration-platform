@@ -20,8 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
@@ -52,6 +55,7 @@ public class NotificationService {
 
         NotificationResponse response = mapToResponse(saved);
 
+        log.debug("Notification delivered: type={}, recipient={}", type, recipient.getEmail());
         messagingTemplate.convertAndSendToUser(recipient.getEmail(), "/queue/notifications", response);
 
         return response;

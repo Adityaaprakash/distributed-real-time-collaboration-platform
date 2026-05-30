@@ -24,6 +24,7 @@ public class WebSocketDisconnectListener {
     @EventListener
     public void handleDisconnect(SessionDisconnectEvent event) {
         String sessionId = event.getSessionId();
+        log.info("WS disconnected: session={}", sessionId);
         CollaborationSessionRegistry.SessionInfo info = sessionRegistry.userLeft(sessionId);
         if (info != null) {
             Set<String> currentEmails = sessionRegistry.getActiveUsers(info.documentId());

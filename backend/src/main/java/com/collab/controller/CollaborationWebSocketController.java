@@ -23,8 +23,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class CollaborationWebSocketController {
 
     private final CollaborationSessionRegistry sessionRegistry;
@@ -71,6 +74,7 @@ public class CollaborationWebSocketController {
         User user = userRepository.findByEmail(email).orElseThrow();
         verifyMembership(documentId, email);
         
+        log.debug("WS edit received: document={}, user={}", documentId, email);
         pendingEditBuffer.put(documentId, message.content(), message.title(), email);
 
         Document doc = documentRepository.findById(UUID.fromString(documentId)).orElseThrow();

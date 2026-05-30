@@ -81,7 +81,7 @@ const ActivityFeed: React.FC<Props> = ({ workspaceId }) => {
   };
 
   if (loading && activities.length === 0) return <div className="activity-loading">Loading...</div>;
-  if (activities.length === 0) return <div className="empty-activity">No activity yet.</div>;
+  if (activities.length === 0) return <div className="empty-activity" style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>No activity yet — activity will appear here as your team works</div>;
 
   return (
     <div className="activity-feed">

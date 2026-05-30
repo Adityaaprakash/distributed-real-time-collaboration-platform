@@ -39,6 +39,7 @@ public class WorkspaceChatService {
 
     @Transactional
     public ChatMessageResponse sendMessage(String workspaceId, String content, String senderEmail) {
+        log.debug("Chat message: workspace={}, sender={}, length={}", workspaceId, senderEmail, content.length());
         User sender = userRepository.findByEmail(senderEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 

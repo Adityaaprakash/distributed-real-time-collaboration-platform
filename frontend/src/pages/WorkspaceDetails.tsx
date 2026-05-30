@@ -10,6 +10,7 @@ import './WorkspaceDetails.css';
 import { useWorkspaceChat } from '../hooks/useWorkspaceChat';
 import { WorkspaceChatPanel } from '../components/WorkspaceChatPanel';
 import ActivityFeed from '../components/ActivityFeed';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 
 const WorkspaceDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -87,7 +88,15 @@ const WorkspaceDetails = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <div className="workspace-details-container" style={{ padding: '20px' }}>
+      <SkeletonLoader width="100%" height="40px" borderRadius="8px" />
+      <div style={{ marginTop: '20px' }} />
+      <SkeletonLoader width="80%" height="20px" borderRadius="4px" />
+      <div style={{ marginTop: '10px' }} />
+      <SkeletonLoader width="60%" height="20px" borderRadius="4px" />
+    </div>
+  );
   if (!workspace || error) return <div className="error-message">{error || 'Not found'}</div>;
 
   const currentUserRole = members.find(m => m.userId === currentUser?.id)?.role;
@@ -164,7 +173,12 @@ const WorkspaceDetails = () => {
                   onDelete={(docId) => setDocuments(documents.filter(d => d.id !== docId))}
                 />
               ))}
-              {documents.length === 0 && <p>No documents found.</p>}
+              {documents.length === 0 && (
+                <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
+                  <p>No documents yet — create one to get started</p>
+                  <button className="btn-primary" style={{ marginTop: '10px' }} onClick={() => navigate(`/workspaces/${id}/documents/new`)}>New Document</button>
+                </div>
+              )}
             </div>
           </div>
         )}

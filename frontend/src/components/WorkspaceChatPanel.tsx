@@ -62,6 +62,11 @@ export const WorkspaceChatPanel: React.FC<WorkspaceChatPanelProps> = ({
       <div className="messages-container" ref={containerRef}>
         {isLoadingHistory ? (
           <div className="loading-history">Loading history...</div>
+        ) : messages.length === 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#64748b' }}>
+            <span style={{ fontSize: '32px', marginBottom: '10px' }}>💬</span>
+            <p>No messages yet — say hello!</p>
+          </div>
         ) : (
           messages.map(msg => (
             <ChatMessage 

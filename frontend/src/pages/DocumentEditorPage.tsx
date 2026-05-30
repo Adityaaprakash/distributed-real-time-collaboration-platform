@@ -8,6 +8,7 @@ import VersionHistorySidebar from '../components/VersionHistorySidebar';
 import documentService from '../services/documentService';
 import { useCollaboration } from '../hooks/useCollaboration';
 import { ActiveUserInfo, DocumentEditBroadcast, PresenceBroadcast, CursorBroadcast } from '../types/collaboration';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 import './DocumentEditor.css';
 
 const DocumentEditorPage = () => {
@@ -97,45 +98,56 @@ const DocumentEditorPage = () => {
       </button>
       
       <div className="editor-container">
-        <div className={`main-editor ${showHistory ? 'with-sidebar' : ''}`}>
-          <DocumentToolbar 
-            document={document}
-            title={title}
-            onTitleChange={handleTitleChange}
-            saveStatus={saveStatus}
-            isDirty={isDirty}
-            canDelete={canDelete}
-            onDelete={handleDelete}
-            onToggleHistory={() => setShowHistory(!showHistory)}
-            activeUsers={activeUsers}
-            isConnected={isConnected}
-            collaboratorCursors={collaboratorCursors}
-            currentUserEmail={currentUser?.email}
-          />
-          <div className="textarea-wrapper" style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <div className="cursor-pills-container" style={{ position: 'absolute', top: 5, right: 20, display: 'flex', gap: 5, zIndex: 10, pointerEvents: 'none' }}>
-              {Array.from(collaboratorCursors.entries()).map(([email, line]) => {
-                 if (email === currentUser?.email) return null;
-                 const user = activeUsers.find(u => u.email === email);
-                 if (!user) return null;
-                 return (
-                   <div key={email} className="cursor-pill slide-in">
-                     👤 {user.fullName} — Line {line}
-                   </div>
-                 );
-              })}
+        {!document ? (
+          <div className="main-editor" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div style={{ padding: '15px', borderBottom: '1px solid #e2e8f0' }}>
+              <SkeletonLoader width="100%" height="40px" borderRadius="4px" />
             </div>
-            <textarea 
-              className="editor-textarea"
-              value={content}
-              onChange={e => handleContentChange(e.target.value)}
-              onClick={handleCursorChange}
-              onKeyUp={handleCursorChange}
-              onSelect={handleCursorChange}
-              placeholder="Start typing..."
-            />
+            <div className="textarea-wrapper" style={{ padding: '20px', flex: 1 }}>
+               <div style={{ backgroundColor: '#f8fafc', height: '100%', borderRadius: '8px', border: '1px dashed #cbd5e1' }} />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className={`main-editor ${showHistory ? 'with-sidebar' : ''}`}>
+            <DocumentToolbar 
+              document={document}
+              title={title}
+              onTitleChange={handleTitleChange}
+              saveStatus={saveStatus}
+              isDirty={isDirty}
+              canDelete={canDelete}
+              onDelete={handleDelete}
+              onToggleHistory={() => setShowHistory(!showHistory)}
+              activeUsers={activeUsers}
+              isConnected={isConnected}
+              collaboratorCursors={collaboratorCursors}
+              currentUserEmail={currentUser?.email}
+            />
+            <div className="textarea-wrapper" style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <div className="cursor-pills-container" style={{ position: 'absolute', top: 5, right: 20, display: 'flex', gap: 5, zIndex: 10, pointerEvents: 'none' }}>
+                {Array.from(collaboratorCursors.entries()).map(([email, line]) => {
+                   if (email === currentUser?.email) return null;
+                   const user = activeUsers.find(u => u.email === email);
+                   if (!user) return null;
+                   return (
+                     <div key={email} className="cursor-pill slide-in">
+                       👤 {user.fullName} — Line {line}
+                     </div>
+                   );
+                })}
+              </div>
+              <textarea 
+                className="editor-textarea"
+                value={content}
+                onChange={e => handleContentChange(e.target.value)}
+                onClick={handleCursorChange}
+                onKeyUp={handleCursorChange}
+                onSelect={handleCursorChange}
+                placeholder="Start typing..."
+              />
+            </div>
+          </div>
+        )}
         
         <VersionHistorySidebar 
           workspaceId={id!}

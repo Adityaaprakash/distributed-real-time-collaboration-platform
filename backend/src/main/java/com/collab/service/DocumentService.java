@@ -22,8 +22,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
@@ -62,6 +65,7 @@ public class DocumentService {
                 .build();
 
         document = documentRepository.save(document);
+        log.info("Document created: id={}, workspace={}, by={}", document.getId(), workspaceId, currentUserEmail);
         
         activityService.recordActivity(workspaceId, currentUserEmail,
             ActivityType.DOCUMENT_CREATED, "Created document: " + document.getTitle(),
@@ -117,6 +121,7 @@ public class DocumentService {
         document.setLastEditedBy(user);
 
         document = documentRepository.save(document);
+        log.debug("Document updated: id={}, version={}, by={}", document.getId(), document.getVersion(), currentUserEmail);
         
         activityService.recordActivity(workspaceId, currentUserEmail,
             ActivityType.DOCUMENT_UPDATED, "Edited document: " + document.getTitle(),

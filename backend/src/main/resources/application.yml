@@ -3,9 +3,9 @@ spring:
     name: backend
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/collabdb
-    username: collab
-    password: collab123
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/collabdb}
+    username: ${SPRING_DATASOURCE_USERNAME:collab}
+    password: ${SPRING_DATASOURCE_PASSWORD:collab123}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -24,10 +24,41 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
 
-jwt:
-  secret: 4b2c1598f82a932c0c7a840eab7110e53a253086eb0c2a2651475b945f3c959828d11d1efcd16bb6e42b8eec1ea2b6e12e756184852c03c5d6e24b7a1d1e4c9f
-  expiration: 900000
-  refresh-expiration: 604800000
+app:
+  jwt:
+    secret: ${JWT_SECRET:4b2c1598f82a932c0c7a840eab7110e53a253086eb0c2a2651475b945f3c959828d11d1efcd16bb6e42b8eec1ea2b6e12e756184852c03c5d6e24b7a1d1e4c9f}
+    access-token-expiry: 900000
+    refresh-token-expiry: 604800000
+  storage:
+    path: ${STORAGE_PATH:./uploads}
+    max-file-size-mb: ${MAX_FILE_SIZE_MB:10}
+
+logging:
+  level:
+    com.collab: DEBUG
+    org.springframework.web.socket: INFO
+    org.springframework.security: WARN
+  pattern:
+    console: "%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: Distributed Collaboration Platform
+    version: 1.0.0
+    description: Real-time collaborative workspace platform

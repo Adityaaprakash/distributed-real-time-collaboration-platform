@@ -1,0 +1,36 @@
+/* Mobile: < 640px */
+@media (max-width: 639px) {
+  .tabs {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .chat-input-area textarea {
+    height: 60px !important;
+  }
+  .members-grid, .documents-grid, .workspaces-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .app-name-text {
+    display: none !important;
+  }
+}
+
+/* Tablet: 640px - 1024px */
+@media (min-width: 640px) and (max-width: 1024px) {
+  .workspaces-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .documents-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Desktop: > 1024px */
+@media (min-width: 1025px) {
+  .workspaces-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}

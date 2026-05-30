@@ -14,13 +14,13 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
+    @Value("${app.jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.expiration}")
+    @Value("${app.jwt.access-token-expiry}")
     private long jwtExpiration;
 
-    @Value("${jwt.refresh-expiration}")
+    @Value("${app.jwt.refresh-token-expiry}")
     private long refreshExpiration;
 
     public String extractEmail(String token) {

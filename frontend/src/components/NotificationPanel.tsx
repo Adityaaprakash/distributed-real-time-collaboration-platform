@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NotificationResponse } from '../types/notification';
 import { timeAgo } from '../utils/timeUtils';
+import { SkeletonLoader } from '../components/SkeletonLoader';
 
 interface Props {
   notifications: NotificationResponse[];
@@ -40,8 +41,17 @@ const NotificationPanel: React.FC<Props> = ({ notifications, markAsRead, markAll
       </div>
       
       <div className="notification-list">
-        {notifications.length === 0 ? (
-          <div className="empty-notifications">No notifications yet</div>
+        {!notifications ? (
+          <div style={{ padding: '10px' }}>
+             <SkeletonLoader width="100%" height="60px" borderRadius="8px" className="mb-2" />
+             <SkeletonLoader width="100%" height="60px" borderRadius="8px" className="mb-2" />
+             <SkeletonLoader width="100%" height="60px" borderRadius="8px" />
+          </div>
+        ) : notifications.length === 0 ? (
+          <div className="empty-notifications" style={{ textAlign: 'center', padding: '20px' }}>
+            <span style={{ fontSize: '24px' }}>🔔</span>
+            <p>You're all caught up!</p>
+          </div>
         ) : (
           notifications.map(n => (
             <div 

@@ -16,8 +16,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WorkspaceService {
 
     private final WorkspaceRepository workspaceRepository;
@@ -37,6 +40,7 @@ public class WorkspaceService {
                 .owner(currentUser)
                 .build();
         workspace = workspaceRepository.save(workspace);
+        log.info("Workspace created: id={}, name={}, owner={}", workspace.getId(), workspace.getName(), currentUserEmail);
 
         WorkspaceMemberKey memberKey = new WorkspaceMemberKey(workspace.getId(), currentUser.getId());
         WorkspaceMember member = WorkspaceMember.builder()
@@ -147,6 +151,7 @@ public class WorkspaceService {
                 .build();
 
         workspaceMemberRepository.save(newMember);
+        log.info("Member invited: workspace={}, invited={}, by={}", workspaceId, request.getEmail(), currentUserEmail);
 
         activityService.recordActivity(workspaceId, currentUserEmail,
             ActivityType.MEMBER_JOINED, invitedUser.getFullName() + " joined the workspace",
