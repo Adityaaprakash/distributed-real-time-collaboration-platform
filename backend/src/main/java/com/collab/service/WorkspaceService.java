@@ -23,6 +23,8 @@ public class WorkspaceService {
     private final WorkspaceRepository workspaceRepository;
     private final WorkspaceMemberRepository workspaceMemberRepository;
     private final UserRepository userRepository;
+    private final ActivityService activityService;
+    private final NotificationService notificationService;
 
     @Transactional
     public WorkspaceResponse createWorkspace(CreateWorkspaceRequest request, String currentUserEmail) {
@@ -146,6 +148,16 @@ public class WorkspaceService {
 
         workspaceMemberRepository.save(newMember);
 
+        activityService.recordActivity(workspaceId, currentUserEmail,
+            ActivityType.MEMBER_JOINED, invitedUser.getFullName() + " joined the workspace",
+            "WORKSPACE", workspaceId);
+            
+        notificationService.createAndDeliver(invitedUser.getId(),
+            NotificationType.WORKSPACE_INVITE,
+            "Workspace Invitation",
+            currentUser.getFullName() + " invited you to " + workspace.getName(),
+            workspaceId, "WORKSPACE", workspaceId);
+
         return WorkspaceMemberResponse.builder()
                 .userId(invitedUser.getId())
                 .email(invitedUser.getEmail())
@@ -170,7 +182,15 @@ public class WorkspaceService {
         }
 
         WorkspaceMemberKey key = new WorkspaceMemberKey(workspaceId, targetUserId);
+        
+        WorkspaceMember removedMember = workspaceMemberRepository.findById(key)
+            .orElseThrow(() -> new ResourceNotFoundException("Member not found"));
+            
         workspaceMemberRepository.deleteById(key);
+        
+        activityService.recordActivity(workspaceId, currentUserEmail,
+            ActivityType.MEMBER_REMOVED, removedMember.getUser().getFullName() + " was removed",
+            "WORKSPACE", workspaceId);
     }
 
     @Transactional(readOnly = true)

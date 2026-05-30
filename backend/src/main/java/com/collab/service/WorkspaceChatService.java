@@ -11,6 +11,7 @@ import com.collab.repository.UserRepository;
 import com.collab.repository.WorkspaceMemberRepository;
 import com.collab.repository.WorkspaceMessageRepository;
 import com.collab.repository.WorkspaceRepository;
+import com.collab.entity.NotificationType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,8 @@ public class WorkspaceChatService {
     private final WorkspaceMessageRepository messageRepository;
     private final WorkspaceMemberRepository memberRepository;
     private final RedisMessagePublisher redisMessagePublisher;
+    private final MentionDetectionService mentionDetectionService;
+    private final NotificationService notificationService;
     private final ObjectMapper objectMapper;
 
     @Transactional
@@ -63,6 +66,15 @@ public class WorkspaceChatService {
             redisMessagePublisher.publish(workspaceId, json);
         } catch (Exception e) {
             log.error("Failed to serialize or publish chat message", e);
+        }
+
+        List<User> mentionedUsers = mentionDetectionService.detectMentions(content, wsId);
+        for (User u : mentionedUsers) {
+            notificationService.createAndDeliver(
+                u.getId(), NotificationType.CHAT_MENTION,
+                "You were mentioned",
+                sender.getFullName() + " mentioned you in chat",
+                wsId, "WORKSPACE", wsId);
         }
 
         return response;

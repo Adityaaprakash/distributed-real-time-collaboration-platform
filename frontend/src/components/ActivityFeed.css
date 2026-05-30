@@ -1,0 +1,91 @@
+.activity-feed {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  position: relative;
+}
+
+.activity-feed::before {
+  content: '';
+  position: absolute;
+  top: 24px;
+  bottom: 24px;
+  left: 45px;
+  width: 2px;
+  background: #eee;
+  z-index: 0;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.activity-item.clickable:hover {
+  cursor: pointer;
+  background: rgba(0,0,0,0.02);
+  border-radius: 8px;
+}
+
+.activity-actor-avatar {
+  background: #bb86fc;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 16px;
+  box-shadow: 0 0 0 4px white;
+}
+
+.activity-content {
+  flex: 1;
+  background: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+}
+
+.activity-description {
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.activity-time {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.load-more-btn {
+  margin-top: 16px;
+  align-self: center;
+  padding: 8px 16px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.load-more-btn:hover {
+  background: #e0e0e0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.activity-loading, .empty-activity {
+  text-align: center;
+  padding: 48px;
+  color: #666;
+}

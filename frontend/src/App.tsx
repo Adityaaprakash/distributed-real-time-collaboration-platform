@@ -7,7 +7,7 @@ import WorkspaceCreate from './pages/WorkspaceCreate';
 import WorkspaceDetails from './pages/WorkspaceDetails';
 import DocumentCreatePage from './pages/DocumentCreatePage';
 import DocumentEditorPage from './pages/DocumentEditorPage';
-import { ProtectedRoute } from './components/ProtectedRoute';
+import ProtectedLayout from './components/ProtectedLayout';
 
 function App() {
   return (
@@ -15,26 +15,15 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route 
-          path="/dashboard" 
-          element={<ProtectedRoute><Dashboard /></ProtectedRoute>} 
-        />
-        <Route 
-          path="/workspaces/create" 
-          element={<ProtectedRoute><WorkspaceCreate /></ProtectedRoute>} 
-        />
-        <Route 
-          path="/workspaces/:id" 
-          element={<ProtectedRoute><WorkspaceDetails /></ProtectedRoute>} 
-        />
-        <Route 
-          path="/workspaces/:id/documents/new" 
-          element={<ProtectedRoute><DocumentCreatePage /></ProtectedRoute>} 
-        />
-        <Route 
-          path="/workspaces/:id/documents/:documentId" 
-          element={<ProtectedRoute><DocumentEditorPage /></ProtectedRoute>} 
-        />
+        
+        <Route element={<ProtectedLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/workspaces/create" element={<WorkspaceCreate />} />
+          <Route path="/workspaces/:id" element={<WorkspaceDetails />} />
+          <Route path="/workspaces/:id/documents/new" element={<DocumentCreatePage />} />
+          <Route path="/workspaces/:id/documents/:documentId" element={<DocumentEditorPage />} />
+        </Route>
+        
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

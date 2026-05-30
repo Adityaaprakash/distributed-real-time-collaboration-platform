@@ -9,6 +9,7 @@ import { DocumentResponse } from '../types/document';
 import './WorkspaceDetails.css';
 import { useWorkspaceChat } from '../hooks/useWorkspaceChat';
 import { WorkspaceChatPanel } from '../components/WorkspaceChatPanel';
+import ActivityFeed from '../components/ActivityFeed';
 
 const WorkspaceDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,7 +26,7 @@ const WorkspaceDetails = () => {
   const [inviteRole, setInviteRole] = useState('MEMBER');
   const [inviteError, setInviteError] = useState<string | null>(null);
 
-  const [activeTab, setActiveTab] = useState<'documents' | 'members' | 'chat'>('documents');
+  const [activeTab, setActiveTab] = useState<'documents' | 'members' | 'chat' | 'activity'>('documents');
 
   const { messages, sendMessage, isConnected, isLoadingHistory } = useWorkspaceChat(id, currentUser?.email);
 
@@ -111,6 +112,7 @@ const WorkspaceDetails = () => {
         <button className={`tab ${activeTab === 'documents' ? 'active' : ''}`} onClick={() => setActiveTab('documents')}>Documents</button>
         <button className={`tab ${activeTab === 'members' ? 'active' : ''}`} onClick={() => setActiveTab('members')}>Members</button>
         <button className={`tab ${activeTab === 'chat' ? 'active' : ''}`} onClick={() => setActiveTab('chat')}>Chat</button>
+        <button className={`tab ${activeTab === 'activity' ? 'active' : ''}`} onClick={() => setActiveTab('activity')}>Activity</button>
       </div>
 
       <div className="tab-content" style={{ marginTop: '20px', height: '600px', display: 'flex', flexDirection: 'column' }}>
@@ -175,6 +177,10 @@ const WorkspaceDetails = () => {
             isLoadingHistory={isLoadingHistory}
             currentUserEmail={currentUser?.email}
           />
+        )}
+        
+        {activeTab === 'activity' && (
+          <ActivityFeed workspaceId={id!} />
         )}
       </div>
       

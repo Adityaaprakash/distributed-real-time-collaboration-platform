@@ -31,6 +31,8 @@ public class DocumentService {
     private final WorkspaceRepository workspaceRepository;
     private final WorkspaceMemberRepository workspaceMemberRepository;
     private final UserRepository userRepository;
+    private final ActivityService activityService;
+    private final NotificationService notificationService;
 
     private User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
@@ -60,6 +62,21 @@ public class DocumentService {
                 .build();
 
         document = documentRepository.save(document);
+        
+        activityService.recordActivity(workspaceId, currentUserEmail,
+            ActivityType.DOCUMENT_CREATED, "Created document: " + document.getTitle(),
+            "DOCUMENT", document.getId());
+            
+        List<WorkspaceMember> members = workspaceMemberRepository.findByIdWorkspaceId(workspaceId);
+        for (WorkspaceMember m : members) {
+            if (!m.getUser().getEmail().equals(currentUserEmail)) {
+                notificationService.createAndDeliver(
+                    m.getUser().getId(), NotificationType.DOCUMENT_CREATED,
+                    "New Document", user.getFullName() + " created: " + document.getTitle(),
+                    workspaceId, "DOCUMENT", document.getId());
+            }
+        }
+        
         return mapToDocumentResponse(document, true);
     }
 
@@ -100,6 +117,18 @@ public class DocumentService {
         document.setLastEditedBy(user);
 
         document = documentRepository.save(document);
+        
+        activityService.recordActivity(workspaceId, currentUserEmail,
+            ActivityType.DOCUMENT_UPDATED, "Edited document: " + document.getTitle(),
+            "DOCUMENT", document.getId());
+            
+        if (!document.getCreatedBy().getEmail().equals(currentUserEmail)) {
+            notificationService.createAndDeliver(
+                document.getCreatedBy().getId(), NotificationType.DOCUMENT_UPDATED,
+                "Document Updated", user.getFullName() + " edited: " + document.getTitle(),
+                workspaceId, "DOCUMENT", document.getId());
+        }
+        
         return mapToDocumentResponse(document, true);
     }
 
@@ -159,6 +188,20 @@ public class DocumentService {
         document.setLastEditedBy(user);
 
         document = documentRepository.save(document);
+        
+        activityService.recordActivity(workspaceId, currentUserEmail,
+            ActivityType.DOCUMENT_RESTORED, "Restored version " + version.getVersion()
+                + " of: " + document.getTitle(),
+            "DOCUMENT", document.getId());
+            
+        if (!document.getCreatedBy().getEmail().equals(currentUserEmail)) {
+            notificationService.createAndDeliver(
+                document.getCreatedBy().getId(), NotificationType.DOCUMENT_RESTORED,
+                "Version Restored", user.getFullName() + " restored version "
+                    + version.getVersion() + " of: " + document.getTitle(),
+                workspaceId, "DOCUMENT", document.getId());
+        }
+        
         return mapToDocumentResponse(document, true);
     }
 
